@@ -57,7 +57,7 @@
     .app { max-width: 1240px; margin: 22px auto 90px; padding: 0 24px; display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 28px; align-items: start; }
 
     /* 필터 */
-    .filters { position: sticky; top: 84px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 22px; max-height: calc(100vh - 104px); overflow-y: auto; }
+    .filters { position: sticky; top: 84px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 18px; max-height: calc(100vh - 104px); overflow-y: auto; }
     .fhead { display: none; align-items: center; justify-content: space-between; }
     .fgroup h3 { margin: 0 0 9px; font-size: 12px; font-weight: 500; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; }
     .opts { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -68,8 +68,8 @@
     .range { display: flex; align-items: center; gap: 10px; }
     .range input { flex: 1; min-width: 0; accent-color: var(--accent); }
     .range output { min-width: 34px; text-align: right; font-weight: 500; }
-    .fbtns { display: grid; gap: 8px; }
-    .fbtns .btn { width: 100%; }
+    .fbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .fbtns .btn { width: 100%; padding: 9px 8px; font-size: 13px; }
     .backdrop { display: none; position: fixed; inset: 0; z-index: 44; background: rgba(20, 14, 8, .5); opacity: 0; transition: opacity .25s; }
 
     /* 결과 머리 */
@@ -240,13 +240,11 @@
   <div class="app">
     <aside class="filters" id="filters" aria-label="필터">
       <div class="fhead"><b>필터</b><button class="btn" type="button" id="filter-close">닫기</button></div>
-      <div class="fgroup"><h3>분류</h3><div class="opts" id="f-cat"></div></div>
+      <div class="fgroup"><h3>분류</h3><div class="opts"><span class="opts" id="f-cat" style="display:contents"></span><button class="opt" id="f-sel" type="button" aria-pressed="false">♥ 담은 곳</button></div></div>
       <div class="fgroup"><h3>태그 (하나라도 해당)</h3><div class="opts" id="f-tags"></div></div>
-      <div class="fgroup"><h3>관심도 최소</h3><div class="range"><input id="f-min" type="range" min="0" max="100" step="5" value="0" aria-label="관심도 최소"><output id="f-min-o">0</output></div></div>
-      <div class="fgroup"><h3>담은 곳</h3><div class="opts"><button class="opt" id="f-sel" type="button" aria-pressed="false">♥ 가 보고 싶은 곳만</button></div></div>
       <div class="fbtns">
-        <button class="btn" id="copy" type="button">♥ 담은 곳 목록 복사</button>
-        <button class="btn" id="reset" type="button">필터 초기화</button>
+        <button class="btn" id="copy" type="button" title="♥ 로 담은 곳을 이름과 지도 링크로 복사">♥ 목록 복사</button>
+        <button class="btn" id="reset" type="button">초기화</button>
       </div>
     </aside>
 
@@ -298,7 +296,7 @@
     let items = [];
     let prefs = read(KEY);      // 내가 남긴 ♥ 와 점수 (이 브라우저에만 저장)
     const ui = read(UIKEY);     // 보기 방식·정렬·화면 밝기
-    const state = { q: '', cat: '', tags: new Set(), onlySel: false, min: 0, sort: ui.sort || 'file', view: ui.view || 'grid' };
+    const state = { q: '', cat: '', tags: new Set(), onlySel: false, sort: ui.sort || 'file', view: ui.view || 'grid' };
 
     // ── 태그: 설명 글에 들어 있는 단어로 자동 분류 ──
     const TAG_RULES = [
@@ -331,7 +329,6 @@
       let list = items.filter((it) =>
         (!state.cat || it.category === state.cat) &&
         (!state.onlySel || isSel(it)) &&
-        scoreOf(it) >= state.min &&
         (!state.tags.size || it.tags.some((t) => state.tags.has(t))) &&
         (!q || (it.name + ' ' + it.description + ' ' + it.tags.join(' ')).toLowerCase().includes(q)));
       if (state.sort === 'score') list = [...list].sort((a, b) => scoreOf(b) - scoreOf(a));
@@ -339,7 +336,7 @@
       if (state.sort === 'heart') list = [...list].sort((a, b) => Number(isSel(b)) - Number(isSel(a)));
       return list;
     }
-    const activeCount = () => (state.cat ? 1 : 0) + state.tags.size + (state.onlySel ? 1 : 0) + (state.min > 0 ? 1 : 0);
+    const activeCount = () => (state.cat ? 1 : 0) + state.tags.size + (state.onlySel ? 1 : 0);
 
     // ── 그리기 ──
     const meter = (sc) => `<div class="meter">관심도 <div class="bar"><i style="width:${sc}%"></i></div><b>${sc}</b></div>`;
@@ -374,7 +371,6 @@
       $('f-tags').innerHTML = TAG_RULES.map(([t]) => t).filter((t) => counts[t])
         .map((t) => `<button class="opt" type="button" data-tag="${esc(t)}" aria-pressed="${state.tags.has(t)}">${esc(t)}<small>${counts[t]}</small></button>`).join('');
       $('f-sel').setAttribute('aria-pressed', String(state.onlySel));
-      $('f-min').value = state.min; $('f-min-o').textContent = state.min;
     }
 
     function render() {
@@ -383,7 +379,6 @@
       const afs = [];
       if (state.cat) afs.push(['cat', state.cat]);
       state.tags.forEach((t) => afs.push(['tag:' + t, t]));
-      if (state.min > 0) afs.push(['min', '관심도 ' + state.min + '↑']);
       if (state.onlySel) afs.push(['sel', '♥ 담은 곳']);
       $('afs').innerHTML = afs.map(([k, l]) => `<button class="af" type="button" data-af="${esc(k)}">${esc(l)}</button>`).join('');
       $('grid').className = 'grid' + (state.view === 'list' ? ' list' : '');
@@ -400,7 +395,7 @@
     }
 
     function resetFilters() {
-      state.q = ''; state.cat = ''; state.tags.clear(); state.onlySel = false; state.min = 0;
+      state.q = ''; state.cat = ''; state.tags.clear(); state.onlySel = false;
       $('q').value = ''; render();
     }
 
@@ -488,11 +483,10 @@
       state.tags.has(b.dataset.tag) ? state.tags.delete(b.dataset.tag) : state.tags.add(b.dataset.tag); render();
     });
     $('f-sel').addEventListener('click', () => { state.onlySel = !state.onlySel; render(); });
-    $('f-min').addEventListener('input', (e) => { state.min = Number(e.target.value); $('f-min-o').textContent = state.min; render(); });
     $('afs').addEventListener('click', (e) => {
       const b = e.target.closest('[data-af]'); if (!b) return;
       const k = b.dataset.af;
-      if (k === 'cat') state.cat = ''; else if (k === 'min') state.min = 0; else if (k === 'sel') state.onlySel = false;
+      if (k === 'cat') state.cat = ''; else if (k === 'sel') state.onlySel = false;
       else if (k.startsWith('tag:')) state.tags.delete(k.slice(4));
       render();
     });
