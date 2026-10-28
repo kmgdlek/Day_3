@@ -5,6 +5,7 @@ module.exports = async (req, res) => {
   const out = {
     ok: true,
     hasOpenAIKey: Boolean(key),
+    hasPixabayKey: Boolean(process.env.PIXABAY_API_KEY),
     model: process.env.OPENAI_MODEL || 'gpt-6-luna',
     vercelEnv: process.env.VERCEL_ENV || null,
     node: process.version,

@@ -47,8 +47,19 @@
     .badge:empty, .badge[data-n="0"] { display: none; }
 
     /* ── 소개 ── */
-    .intro { max-width: 1240px; margin: 0 auto; padding: 26px 24px 4px; }
+    .intro { max-width: 1240px; margin: 0 auto; padding: 26px 24px 4px; display: flex; gap: 24px; align-items: flex-start; justify-content: space-between; }
     .intro p { margin: 0; color: var(--muted); max-width: 640px; }
+    /* 오른쪽 위 작은 사진 (Pixabay). 사진 바뀜 애니메이션 시간은 --photo-ms (JS 의 PHOTO_MS 와 같은 값) */
+    .photo { --photo-ms: 2000ms; position: relative; flex: none; width: 168px; height: 112px; margin: 0; border-radius: 16px; overflow: hidden; background: var(--chip); box-shadow: var(--shadow); }
+    .photo[hidden] { display: none; }
+    .layer { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; }
+    .layer.in { animation: photoIn var(--photo-ms) ease forwards; }
+    .layer.out { animation: photoOut var(--photo-ms) ease forwards; }
+    @keyframes photoIn { from { opacity: 0; transform: scale(1.18) translateX(8%); } to { opacity: 1; transform: scale(1) translateX(0); } }
+    @keyframes photoOut { from { opacity: 1; transform: scale(1) translateX(0); } to { opacity: 0; transform: scale(.94) translateX(-8%); } }
+    .photo figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 8px 4px; font-size: 10px; letter-spacing: .04em; text-align: right; background: linear-gradient(transparent, rgba(0, 0, 0, .55)); }
+    .photo figcaption a { color: #fff; text-decoration: none; opacity: .9; }
+    @media (max-width: 640px) { .photo { width: 104px; height: 78px; border-radius: 12px; } .intro { gap: 14px; } }
     .pills { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
     .pill { padding: 6px 14px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); font-size: 14px; color: var(--muted); }
     .pill b { color: var(--ink); font-weight: 700; font-size: 16px; margin-right: 3px; }
@@ -236,8 +247,14 @@
   </header>
 
   <section class="intro">
-    <p>기사와 블로그에서 모은 제주 카페·맛집이에요. 분류와 태그로 좁히고, 마음에 드는 곳은 ♥ 로 담아 보세요.</p>
-    <div class="pills" id="stats"></div>
+    <div>
+      <p>기사와 블로그에서 모은 제주 카페·맛집이에요. 분류와 태그로 좁히고, 마음에 드는 곳은 ♥ 로 담아 보세요.</p>
+      <div class="pills" id="stats"></div>
+    </div>
+    <figure class="photo" id="photo" hidden aria-label="카페와 음식 사진 슬라이드">
+      <div class="layer" id="layer-a"></div><div class="layer" id="layer-b"></div>
+      <figcaption><a id="photo-credit" href="https://pixabay.com" target="_blank" rel="noopener noreferrer">사진: Pixabay</a></figcaption>
+    </figure>
   </section>
 
   <div class="app">
@@ -550,6 +567,35 @@
     }
     addEventListener('scroll', () => follow(), { passive: true });
     addEventListener('resize', () => follow(true));
+
+    // ── 오른쪽 위 작은 사진 (Pixabay): 서버 /api/pixabay 로 가져와 PHOTO_MS 마다 바꾼다 ──
+    const PHOTO_MS = 2000;          // 사진이 바뀌는 애니메이션 시간이자 간격 (CSS 의 --photo-ms 도 같은 값)
+    const PHOTO_QUERIES = ['cafe coffee', 'korean food', 'dessert bakery'];
+    async function startPhotos() {
+      const box = $('photo'); box.style.setProperty('--photo-ms', PHOTO_MS + 'ms');
+      let hits = [];
+      try {
+        const lists = await Promise.all(PHOTO_QUERIES.map((q) =>
+          fetch('/api/pixabay?q=' + encodeURIComponent(q), { signal: AbortSignal.timeout(9000) }).then((r) => (r.ok ? r.json() : { hits: [] })).catch(() => ({ hits: [] }))));
+        lists.forEach((l) => hits.push(...(l.hits || []).slice(0, 5)));
+      } catch { return; }
+      hits = hits.filter((h) => h.webformatURL).sort(() => Math.random() - 0.5);
+      if (hits.length < 2) return;                      // 키가 없거나 실패하면 사진 칸을 숨긴 채로 둔다
+      hits.forEach((h) => { new Image().src = h.webformatURL; });   // 미리 불러와 두기
+      const layers = [$('layer-a'), $('layer-b')];
+      let cur = 1, i = -1;
+      function next() {
+        i = (i + 1) % hits.length;
+        const h = hits[i], nxt = layers[1 - cur], prev = layers[cur];
+        nxt.style.backgroundImage = `url("${h.webformatURL}")`;
+        nxt.className = 'layer in'; prev.className = 'layer out'; cur = 1 - cur;
+        $('photo-credit').href = h.pageURL || 'https://pixabay.com';
+        $('photo-credit').textContent = '사진: ' + (h.user ? h.user + ' · ' : '') + 'Pixabay';
+      }
+      box.hidden = false; next();
+      if (!calm.matches) setInterval(next, PHOTO_MS);   // "동작 줄이기" 설정이면 첫 사진만 보여 준다
+    }
+    startPhotos();
 
     // 화면 밝기(밝게/어둡게)
     function setTheme(t) {
