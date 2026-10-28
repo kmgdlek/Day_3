@@ -49,7 +49,8 @@
 
     /* ── 소개 ── */
     .intro { max-width: 1240px; margin: 0 auto; padding: 26px 24px 4px; display: flex; gap: 24px; align-items: flex-start; justify-content: space-between; }
-    .intro p { margin: 0; color: var(--muted); max-width: 640px; }
+    .intro > div { min-width: 0; }
+    .intro p { margin: 0; color: var(--muted); }
     /* 오른쪽 위 작은 사진 (Pixabay). 사진 바뀜 애니메이션 시간은 --photo-ms (JS 의 PHOTO_MS 와 같은 값) */
     .photo { --photo-ms: 2000ms; flex: none; width: 168px; margin: 0; }
     .frame { position: relative; height: 112px; border-radius: 16px; overflow: hidden; background: var(--chip); box-shadow: var(--shadow); }
