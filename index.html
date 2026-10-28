@@ -69,6 +69,38 @@
       #sort { margin-left: auto; }
       #q { font-size: 16px; }
     }
+
+    /* AI 채팅 */
+    #ai-open { position: fixed; right: 20px; bottom: 20px; z-index: 40; font: inherit; font-size: 15px; font-weight: 500; padding: 14px 20px; border: 0; border-radius: 999px; cursor: pointer; color: #fff; background: var(--ink); box-shadow: 0 8px 24px rgba(43, 33, 24, .3); transition: transform .15s, background .2s; }
+    #ai-open:hover { background: var(--accent); transform: translateY(-2px); }
+    #ai { position: fixed; right: 20px; bottom: 84px; z-index: 50; width: min(390px, calc(100vw - 24px)); height: min(580px, calc(100dvh - 110px)); display: none; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 18px 50px rgba(43, 33, 24, .28); overflow: hidden; }
+    #ai.show { display: flex; }
+    .ai-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+    .ai-head b { font-family: 'Noto Serif KR', serif; font-weight: 500; font-size: 16px; }
+    .ai-head small { display: block; color: var(--muted); font-size: 11px; font-weight: 300; }
+    .ai-x { font: inherit; font-size: 22px; line-height: 1; padding: 4px 8px; background: none; border: 0; cursor: pointer; color: var(--muted); }
+    #msgs { flex: 1; min-height: 0; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: var(--bg); }
+    .m { max-width: 88%; padding: 10px 13px; border-radius: 14px; font-size: 14px; line-height: 1.65; white-space: pre-wrap; word-break: break-word; }
+    .m.u { align-self: flex-end; background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
+    .m.a { align-self: flex-start; background: var(--card); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+    .m.a.err { color: #a33; }
+    .m.a.wait { color: var(--muted); }
+    .picks { align-self: flex-start; display: flex; flex-wrap: wrap; gap: 6px; max-width: 94%; }
+    .pick { font: inherit; font-size: 12px; padding: 5px 11px; border-radius: 999px; cursor: pointer; color: var(--accent); background: #fff; border: 1px solid var(--accent); }
+    .pick:hover { background: var(--accent); color: #fff; }
+    .sugg { display: flex; flex-wrap: wrap; gap: 6px; }
+    .sugg button { font: inherit; font-size: 12px; padding: 6px 12px; border-radius: 999px; cursor: pointer; color: var(--ink); background: var(--card); border: 1px solid var(--line); }
+    .sugg button:hover { border-color: var(--accent); }
+    .ai-form { display: flex; gap: 8px; padding: 10px; border-top: 1px solid var(--line); background: var(--card); }
+    #ai-q { flex: 1; min-width: 0; font: inherit; font-size: 15px; padding: 10px 12px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; outline: none; }
+    #ai-q:focus { border-color: var(--accent); }
+    #ai-send { font: inherit; font-size: 14px; font-weight: 500; padding: 0 16px; border: 0; border-radius: 10px; cursor: pointer; color: #fff; background: var(--accent); }
+    #ai-send:disabled { background: #c9b8a8; cursor: wait; }
+    @media (max-width: 560px) {
+      #ai-open { right: 14px; bottom: 14px; }
+      #ai { right: 12px; left: 12px; width: auto; bottom: 76px; }
+      #ai-q { font-size: 16px; }
+    }
   </style>
 </head>
 <body>
@@ -108,6 +140,16 @@
       관심도 점수는 직접 정하는 값이며 실제 평점이 아닙니다. 설명은 아래 각 항목의 출처(기사·블로그)를 바탕으로 정리한 것이고, 영업 여부·시간·가격은 바뀔 수 있으니 방문 전 네이버 지도에서 확인하세요.
     </div>
   </footer>
+
+  <button id="ai-open" type="button" aria-haspopup="dialog" aria-controls="ai">💬 AI에게 물어보기</button>
+  <section id="ai" role="dialog" aria-label="AI 도우미">
+    <div class="ai-head"><div><b>AI 도우미</b><small>이 페이지의 51곳 안에서만 추천해요</small></div><button class="ai-x" type="button" id="ai-close" aria-label="닫기">×</button></div>
+    <div id="msgs" aria-live="polite"></div>
+    <form class="ai-form" id="ai-form">
+      <input id="ai-q" placeholder="예: 비 오는 날 갈 만한 곳 알려줘" autocomplete="off" maxlength="300" aria-label="AI에게 질문">
+      <button id="ai-send" type="submit">보내기</button>
+    </form>
+  </section>
 
   <script>
     const $ = (id) => document.getElementById(id);
@@ -196,6 +238,70 @@
       }
       render();
     });
+
+    // ───────── AI 도우미 ─────────
+    const history = [];   // 서버로 보내는 대화 기록 (이 페이지를 닫으면 사라짐)
+    const SUGGEST = ['비 오는 날 갈 만한 곳은?', '바다가 보이는 카페 추천해줘', '성산 근처에서 점심 먹을 곳은?'];
+
+    function addMsg(text, cls) {
+      const d = document.createElement('div');
+      d.className = 'm ' + cls; d.textContent = text;
+      $('msgs').appendChild(d); $('msgs').scrollTop = $('msgs').scrollHeight;
+      return d;
+    }
+    function showPicks(names) {
+      if (!names.length) return;
+      const box = document.createElement('div'); box.className = 'picks';
+      names.forEach((n) => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'pick'; b.textContent = n + ' ↓';
+        b.addEventListener('click', () => {
+          state.q = n; $('q').value = n; render();
+          if (innerWidth <= 560) openAi(false);
+          document.querySelector('.count').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        box.appendChild(b);
+      });
+      $('msgs').appendChild(box); $('msgs').scrollTop = $('msgs').scrollHeight;
+    }
+    function openAi(on) {
+      $('ai').classList.toggle('show', on);
+      $('ai-open').setAttribute('aria-expanded', String(on));
+      if (on) {
+        if (!$('msgs').children.length) {
+          addMsg('안녕하세요! 이 페이지에 모은 제주 카페·맛집 51곳 안에서 골라 드려요. 무엇이 궁금하세요?', 'a');
+          const s = document.createElement('div'); s.className = 'sugg';
+          SUGGEST.forEach((t) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = t; b.addEventListener('click', () => { s.remove(); ask(t); }); s.appendChild(b); });
+          $('msgs').appendChild(s);
+        }
+        setTimeout(() => $('ai-q').focus(), 50);
+      }
+    }
+    async function ask(text) {
+      text = text.trim();
+      if (!text) return;
+      $('ai-send').disabled = true;
+      addMsg(text, 'u'); history.push({ role: 'user', content: text });
+      const wait = addMsg('찾는 중…', 'a wait');
+      try {
+        const res = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: history }) });
+        const raw = await res.text();
+        let data; try { data = JSON.parse(raw); } catch { throw new Error('서버 응답을 읽지 못했어요 (' + res.status + ')'); }
+        if (data.error) throw new Error(data.error);
+        wait.className = 'm a'; wait.textContent = data.answer;
+        history.push({ role: 'assistant', content: data.answer });
+        showPicks(data.places || []);
+      } catch (e) {
+        console.error(e);
+        history.pop();   // 실패한 질문은 기록에서 뺀다
+        wait.className = 'm a err'; wait.textContent = e.message || '답을 가져오지 못했어요. 잠시 후 다시 시도해 주세요.';
+      } finally {
+        $('ai-send').disabled = false; $('msgs').scrollTop = $('msgs').scrollHeight;
+      }
+    }
+    $('ai-open').addEventListener('click', () => openAi(!$('ai').classList.contains('show')));
+    $('ai-close').addEventListener('click', () => openAi(false));
+    $('ai-form').addEventListener('submit', (e) => { e.preventDefault(); const v = $('ai-q').value; $('ai-q').value = ''; ask(v); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') openAi(false); });
 
     fetch('jeju_restaurants.json')
       .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
