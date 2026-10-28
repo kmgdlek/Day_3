@@ -51,16 +51,18 @@
     .intro { max-width: 1240px; margin: 0 auto; padding: 26px 24px 4px; display: flex; gap: 24px; align-items: flex-start; justify-content: space-between; }
     .intro p { margin: 0; color: var(--muted); max-width: 640px; }
     /* 오른쪽 위 작은 사진 (Pixabay). 사진 바뀜 애니메이션 시간은 --photo-ms (JS 의 PHOTO_MS 와 같은 값) */
-    .photo { --photo-ms: 2000ms; position: relative; flex: none; width: 168px; height: 112px; margin: 0; border-radius: 16px; overflow: hidden; background: var(--chip); box-shadow: var(--shadow); }
+    .photo { --photo-ms: 2000ms; flex: none; width: 168px; margin: 0; }
+    .frame { position: relative; height: 112px; border-radius: 16px; overflow: hidden; background: var(--chip); box-shadow: var(--shadow); }
     .photo[hidden] { display: none; }
     .layer { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; }
     .layer.in { animation: photoIn var(--photo-ms) ease forwards; }
     .layer.out { animation: photoOut var(--photo-ms) ease forwards; }
     @keyframes photoIn { from { opacity: 0; transform: scale(1.18) translateX(8%); } to { opacity: 1; transform: scale(1) translateX(0); } }
     @keyframes photoOut { from { opacity: 1; transform: scale(1) translateX(0); } to { opacity: 0; transform: scale(.94) translateX(-8%); } }
-    .photo figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 8px 4px; font-size: 10px; letter-spacing: .04em; text-align: right; background: linear-gradient(transparent, rgba(0, 0, 0, .55)); }
-    .photo figcaption a { color: #fff; text-decoration: none; opacity: .9; }
-    @media (max-width: 640px) { .photo { width: 104px; height: 78px; border-radius: 12px; } .intro { gap: 14px; } }
+    .photo figcaption { margin-top: 7px; font-size: 11px; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .photo figcaption a { color: var(--muted); text-decoration: none; }
+    .photo figcaption a:hover { color: var(--accent); text-decoration: underline; }
+    @media (max-width: 640px) { .photo { width: 104px; } .frame { height: 78px; border-radius: 12px; } .photo figcaption { font-size: 10px; } .intro { gap: 14px; } }
     .pills { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
     .pill { padding: 6px 14px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); font-size: 14px; color: var(--muted); }
     .pill b { color: var(--ink); font-weight: 700; font-size: 16px; margin-right: 3px; }
@@ -181,6 +183,8 @@
       .row .ds { white-space: normal; }
       #q { font-size: 16px; }
     }
+    /* 가로로 눕힌 폰처럼 높이가 낮을 땐 위쪽 바를 고정하지 않아 본문 공간을 아낀다 */
+    @media (max-height: 520px) and (orientation: landscape) { .top { position: static; } .top-in { padding-top: 8px; padding-bottom: 8px; } }
     @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
 
     /* AI 채팅 */
@@ -253,7 +257,7 @@
       <div class="pills" id="stats"></div>
     </div>
     <figure class="photo" id="photo" hidden aria-label="카페와 음식 사진 슬라이드">
-      <div class="layer" id="layer-a"></div><div class="layer" id="layer-b"></div>
+      <div class="frame"><div class="layer" id="layer-a"></div><div class="layer" id="layer-b"></div></div>
       <figcaption><a id="photo-credit" href="https://pixabay.com" target="_blank" rel="noopener noreferrer">사진: Pixabay</a></figcaption>
     </figure>
   </section>
