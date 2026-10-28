@@ -73,8 +73,12 @@
     /* AI 채팅 */
     #ai-open { position: fixed; right: 20px; bottom: 20px; z-index: 40; font: inherit; font-size: 15px; font-weight: 500; padding: 14px 20px; border: 0; border-radius: 999px; cursor: pointer; color: #fff; background: var(--ink); box-shadow: 0 8px 24px rgba(43, 33, 24, .3); transition: transform .15s, background .2s; }
     #ai-open:hover { background: var(--accent); transform: translateY(-2px); }
-    #ai { position: fixed; right: 20px; bottom: 84px; z-index: 50; width: min(390px, calc(100vw - 24px)); height: min(580px, calc(100dvh - 110px)); display: none; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 18px 50px rgba(43, 33, 24, .28); overflow: hidden; }
-    #ai.show { display: flex; }
+    #ai { position: fixed; right: 20px; bottom: 84px; z-index: 50; width: min(390px, calc(100vw - 24px)); height: min(580px, calc(100dvh - 110px)); display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 18px 50px rgba(43, 33, 24, .28); overflow: hidden;
+      /* 부드럽게 열고 닫기: 숨김 상태에서도 레이아웃은 유지하고 투명도·위치만 바꾼다 */
+      opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(14px) scale(.96); transform-origin: bottom right;
+      transition: opacity .25s ease, transform .3s cubic-bezier(.2, .8, .2, 1), visibility 0s linear .3s; }
+    #ai.show { opacity: 1; visibility: visible; pointer-events: auto; transform: none; transition: opacity .25s ease, transform .3s cubic-bezier(.2, .8, .2, 1), visibility 0s; }
+    @media (prefers-reduced-motion: reduce) { #ai, #ai.show { transition: none; } }
     .ai-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--line); }
     .ai-head b { font-family: 'Noto Serif KR', serif; font-weight: 500; font-size: 16px; }
     .ai-head small { display: block; color: var(--muted); font-size: 11px; font-weight: 300; }
@@ -96,6 +100,14 @@
     #ai-q:focus { border-color: var(--accent); }
     #ai-send { font: inherit; font-size: 14px; font-weight: 500; padding: 0 16px; border: 0; border-radius: 10px; cursor: pointer; color: #fff; background: var(--accent); }
     #ai-send:disabled { background: #c9b8a8; cursor: wait; }
+    .st { display: inline-flex; align-items: center; gap: 6px; margin-left: 8px; padding: 2px 8px; font: inherit; font-size: 11px; color: var(--muted); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; cursor: pointer; vertical-align: 2px; }
+    .st i, .dot { width: 8px; height: 8px; border-radius: 50%; background: #e0a31a; display: inline-block; }
+    .st.on i, .dot.on { background: #2f9e6b; animation: pulse 2s infinite; }
+    .st.off i, .dot.off { background: #c0463a; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(47, 158, 107, .5); } 70% { box-shadow: 0 0 0 7px rgba(47, 158, 107, 0); } 100% { box-shadow: 0 0 0 0 rgba(47, 158, 107, 0); } }
+    .dot { margin-right: 8px; box-shadow: 0 0 0 2px rgba(255, 255, 255, .85); }
+    #ai-q:disabled { background: #efe7dc; cursor: not-allowed; }
+    @media (prefers-reduced-motion: reduce) { .st.on i, .dot.on { animation: none; } }
     @media (max-width: 560px) {
       #ai-open { right: 14px; bottom: 14px; }
       #ai { right: 12px; left: 12px; width: auto; bottom: 76px; }
@@ -141,9 +153,9 @@
     </div>
   </footer>
 
-  <button id="ai-open" type="button" aria-haspopup="dialog" aria-controls="ai">💬 AI에게 물어보기</button>
+  <button id="ai-open" type="button" aria-haspopup="dialog" aria-controls="ai"><i class="dot" id="ai-dot"></i>💬 AI에게 물어보기</button>
   <section id="ai" role="dialog" aria-label="AI 도우미">
-    <div class="ai-head"><div><b>AI 도우미</b><small>이 페이지의 51곳 안에서만 추천해요</small></div><button class="ai-x" type="button" id="ai-close" aria-label="닫기">×</button></div>
+    <div class="ai-head"><div><b>AI 도우미</b><button type="button" class="st" id="ai-status" title="눌러서 다시 확인"><i></i><span>확인 중…</span></button><small>이 페이지의 51곳 안에서만 추천해요</small></div><button class="ai-x" type="button" id="ai-close" aria-label="닫기">×</button></div>
     <div id="msgs" aria-live="polite"></div>
     <form class="ai-form" id="ai-form">
       <input id="ai-q" placeholder="예: 비 오는 날 갈 만한 곳 알려줘" autocomplete="off" maxlength="300" aria-label="AI에게 질문">
@@ -243,6 +255,38 @@
     const history = [];   // 서버로 보내는 대화 기록 (이 페이지를 닫으면 사라짐)
     const SUGGEST = ['비 오는 날 갈 만한 곳은?', '바다가 보이는 카페 추천해줘', '성산 근처에서 점심 먹을 곳은?'];
 
+    // 온라인/오프라인: 서버(/api/health?deep=1)가 응답하고 OpenAI 키가 유효하면 온라인
+    let aiState = 'check';
+    function setStatus(state, why) {
+      aiState = state;
+      const label = { on: '온라인', off: '오프라인', check: '확인 중…' }[state];
+      $('ai-status').className = 'st ' + state;
+      $('ai-status').querySelector('span').textContent = label;
+      $('ai-status').title = why ? why + ' (눌러서 다시 확인)' : '눌러서 다시 확인';
+      $('ai-dot').className = 'dot ' + state;
+      $('ai-q').disabled = state === 'off';
+      $('ai-q').placeholder = state === 'off' ? '지금은 오프라인이에요' : '예: 비 오는 날 갈 만한 곳 알려줘';
+      $('ai-send').disabled = state === 'off';
+    }
+    async function checkStatus() {
+      setStatus('check');
+      try {
+        const r = await fetch('/api/health?deep=1', { cache: 'no-store', signal: AbortSignal.timeout(9000) });
+        if (!r.ok) return setStatus('off', '서버 응답 오류 (' + r.status + ')');
+        const d = await r.json();
+        if (!d.hasOpenAIKey) return setStatus('off', '서버에 API 키가 없어요');
+        if (d.openai === 'ok') return setStatus('on', 'AI와 연결되어 있어요');
+        if (d.openai === 'auth') return setStatus('off', 'API 키가 올바르지 않아요');
+        if (d.openai === 'unreachable') return setStatus('off', 'OpenAI에 연결하지 못했어요');
+        setStatus('off', 'OpenAI 응답 오류' + (d.openaiStatus ? ' (' + d.openaiStatus + ')' : ''));
+      } catch {
+        setStatus('off', '서버에 연결할 수 없어요');
+      }
+    }
+    $('ai-status').addEventListener('click', checkStatus);
+    addEventListener('online', checkStatus);
+    addEventListener('offline', () => setStatus('off', '인터넷 연결이 끊겼어요'));
+
     function addMsg(text, cls) {
       const d = document.createElement('div');
       d.className = 'm ' + cls; d.textContent = text;
@@ -267,6 +311,7 @@
       $('ai').classList.toggle('show', on);
       $('ai-open').setAttribute('aria-expanded', String(on));
       if (on) {
+        checkStatus();
         if (!$('msgs').children.length) {
           addMsg('안녕하세요! 이 페이지에 모은 제주 카페·맛집 51곳 안에서 골라 드려요. 무엇이 궁금하세요?', 'a');
           const s = document.createElement('div'); s.className = 'sugg';
@@ -279,6 +324,7 @@
     async function ask(text) {
       text = text.trim();
       if (!text) return;
+      if (aiState === 'off') { addMsg('지금은 오프라인이라 답할 수 없어요. 위의 상태를 눌러 다시 확인해 보세요.', 'a err'); return; }
       $('ai-send').disabled = true;
       addMsg(text, 'u'); history.push({ role: 'user', content: text });
       const wait = addMsg('찾는 중…', 'a wait');
@@ -290,18 +336,22 @@
         wait.className = 'm a'; wait.textContent = data.answer;
         history.push({ role: 'assistant', content: data.answer });
         showPicks(data.places || []);
+        setStatus('on', 'AI와 연결되어 있어요');
       } catch (e) {
         console.error(e);
+        checkStatus();
         history.pop();   // 실패한 질문은 기록에서 뺀다
         wait.className = 'm a err'; wait.textContent = e.message || '답을 가져오지 못했어요. 잠시 후 다시 시도해 주세요.';
       } finally {
-        $('ai-send').disabled = false; $('msgs').scrollTop = $('msgs').scrollHeight;
+        $('ai-send').disabled = aiState === 'off'; $('msgs').scrollTop = $('msgs').scrollHeight;
       }
     }
     $('ai-open').addEventListener('click', () => openAi(!$('ai').classList.contains('show')));
     $('ai-close').addEventListener('click', () => openAi(false));
     $('ai-form').addEventListener('submit', (e) => { e.preventDefault(); const v = $('ai-q').value; $('ai-q').value = ''; ask(v); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') openAi(false); });
+
+    checkStatus();
 
     fetch('jeju_restaurants.json')
       .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
