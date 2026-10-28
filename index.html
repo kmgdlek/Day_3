@@ -57,7 +57,9 @@
     .app { max-width: 1240px; margin: 22px auto 90px; padding: 0 24px; display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 28px; align-items: start; }
 
     /* 필터 */
-    .filters { position: sticky; top: 84px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 18px; max-height: calc(100vh - 104px); overflow-y: auto; }
+    /* 왼쪽 가운데에 두고, 스크롤하면 JS 가 천천히 부드럽게 따라가게 한다 */
+    .fwrap { position: relative; align-self: stretch; }
+    .filters { position: absolute; left: 0; right: 0; top: 0; will-change: transform; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 18px; max-height: calc(100vh - 104px); overflow-y: auto; }
     .fhead { display: none; align-items: center; justify-content: space-between; }
     .fgroup h3 { margin: 0 0 9px; font-size: 12px; font-weight: 500; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; }
     .opts { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -150,7 +152,8 @@
       .top-in { padding: 10px 16px; }
       .intro { padding: 20px 16px 0; }
       #filter-toggle { display: inline-block; }
-      .filters { position: fixed; z-index: 45; left: 0; right: 0; bottom: 0; top: auto; max-height: 82vh; max-height: 82dvh; border-radius: 20px 20px 0 0; border-bottom: 0; transform: translateY(105%); transition: transform .3s cubic-bezier(.2, .8, .2, 1); box-shadow: 0 -12px 40px rgba(0, 0, 0, .3); }
+      .fwrap { position: static; min-height: 0 !important; }
+      .filters { position: fixed; z-index: 45; transform-origin: bottom; left: 0; right: 0; bottom: 0; top: auto; max-height: 82vh; max-height: 82dvh; border-radius: 20px 20px 0 0; border-bottom: 0; transform: translateY(105%); transition: transform .3s cubic-bezier(.2, .8, .2, 1); box-shadow: 0 -12px 40px rgba(0, 0, 0, .3); }
       .filters.open { transform: none; }
       .fhead { display: flex; }
       .backdrop { display: block; visibility: hidden; transition: opacity .25s, visibility 0s linear .25s; }
@@ -238,6 +241,7 @@
   </section>
 
   <div class="app">
+    <div class="fwrap" id="fwrap">
     <aside class="filters" id="filters" aria-label="필터">
       <div class="fhead"><b>필터</b><button class="btn" type="button" id="filter-close">닫기</button></div>
       <div class="fgroup"><h3>분류</h3><div class="opts"><span class="opts" id="f-cat" style="display:contents"></span><button class="opt" id="f-sel" type="button" aria-pressed="false">♥ 담은 곳</button></div></div>
@@ -247,6 +251,7 @@
         <button class="btn" id="reset" type="button">초기화</button>
       </div>
     </aside>
+    </div>
 
     <main>
       <div class="rhead">
@@ -392,6 +397,7 @@
       const c = (cat) => items.filter((it) => it.category === cat).length;
       $('stats').innerHTML = `<span class="pill"><b>${items.length}</b>곳</span><span class="pill"><b>${c('카페')}</b>카페</span><span class="pill"><b>${c('음식점')}</b>음식점</span><span class="pill"><b>${items.filter(isSel).length}</b>♥ 담은 곳</span>`;
       renderFilters();
+      requestAnimationFrame(() => follow());
     }
 
     function resetFilters() {
@@ -518,6 +524,32 @@
     $('filter-toggle').addEventListener('click', () => filterDrawer(!$('filters').classList.contains('open')));
     $('filter-close').addEventListener('click', () => filterDrawer(false));
     $('backdrop').addEventListener('click', () => filterDrawer(false));
+
+    // 왼쪽 필터: 화면 왼쪽 가운데에 두고, 스크롤을 천천히 부드럽게 따라간다
+    const fw = $('fwrap'), ff = $('filters');
+    const wide = matchMedia('(min-width: 901px)'), calm = matchMedia('(prefers-reduced-motion: reduce)');
+    let fy = null, fraf = 0, last = 0;
+    function followTarget() {
+      const wrap = fw.getBoundingClientRect(), head = document.querySelector('.top').offsetHeight, h = ff.offsetHeight;
+      const want = head + Math.max(16, (innerHeight - head - h) / 2);    // 보이는 영역 가운데
+      return Math.min(Math.max(want - wrap.top, 0), Math.max(0, wrap.height - h));
+    }
+    function followTick(now) {
+      const t = followTarget(), dt = Math.min(64, now - last || 16); last = now;
+      fy += (t - fy) * (1 - Math.exp(-dt / 260));                         // 시간 상수 0.26초: 느긋하게 따라옴
+      fy = Math.min(Math.max(fy, t - 170), t + 170);                      // 빨리 스크롤해도 화면 밖으로 사라지지 않게 뒤처짐을 제한
+      if (Math.abs(t - fy) < 0.4) fy = t;
+      ff.style.transform = `translateY(${fy.toFixed(1)}px)`;
+      fraf = fy === t ? 0 : requestAnimationFrame(followTick);
+    }
+    function follow(jump) {
+      if (!wide.matches) { ff.style.transform = ''; fy = null; return; }
+      fw.style.minHeight = ff.offsetHeight + 'px';
+      if (fy === null || jump || calm.matches) { fy = followTarget(); ff.style.transform = `translateY(${fy}px)`; return; }
+      if (!fraf) { last = 0; fraf = requestAnimationFrame(followTick); }
+    }
+    addEventListener('scroll', () => follow(), { passive: true });
+    addEventListener('resize', () => follow(true));
 
     // 화면 밝기(밝게/어둡게)
     function setTheme(t) {
