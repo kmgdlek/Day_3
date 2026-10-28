@@ -1,0 +1,414 @@
+{
+  "region": "제주특별자치도",
+  "topic": "제주 카페·맛집",
+  "items": [
+    {
+      "name": "제주 블루보틀 커피",
+      "category": "카페",
+      "description": "구좌(송당). 블루보틀의 제주 첫 매장으로, 넓은 실내와 언덕 전망이 있고 제주 블렌드 드립 커피가 추천 메뉴",
+      "score": 85,
+      "selected": false,
+      "source": "https://the-edit.co.kr/41106"
+    },
+    {
+      "name": "커피 템플",
+      "category": "카페",
+      "description": "제주시. 바리스타 김사홍의 제주 매장으로, 슈퍼 클린 에스프레소와 귤을 활용한 창의적인 음료로 알려진 곳",
+      "score": 95,
+      "selected": false,
+      "source": "https://the-edit.co.kr/41106"
+    },
+    {
+      "name": "테라로사 서귀포",
+      "category": "카페",
+      "description": "서귀포시. 올레길과 해변 가까이에 있는 넓고 편안한 매장으로, 다양한 빵과 커피를 함께 즐길 수 있음",
+      "score": 40,
+      "selected": false,
+      "source": "https://the-edit.co.kr/41106"
+    },
+    {
+      "name": "비브레이브 커피",
+      "category": "카페",
+      "description": "서귀포시. 평가 높은 희귀 원두를 비교적 저렴하게 파는 스페셜티 전문점으로, 서호동과 혁신도시에 지점이 있음",
+      "score": 55,
+      "selected": true,
+      "source": "https://the-edit.co.kr/41106"
+    },
+    {
+      "name": "픽스커피",
+      "category": "카페",
+      "description": "제주시. 2016년 서울에서 내려온 부부가 연 카페로, 시내 매장과 주차가 편한 공단 매장이 있음",
+      "score": 80,
+      "selected": true,
+      "source": "https://the-edit.co.kr/41106"
+    },
+    {
+      "name": "그러므로 커피",
+      "category": "카페",
+      "description": "제주시. 한라수목원 근처의 인기 카페로, 계절 아메리카노와 과일 타르트가 추천 메뉴",
+      "score": 60,
+      "selected": true,
+      "source": "https://the-edit.co.kr/41106"
+    },
+    {
+      "name": "유스커피",
+      "category": "카페",
+      "description": "제주시. 더에디트 기사에서 제주시 추천 카페로 함께 언급된 곳(세부 설명 없음)",
+      "score": 55,
+      "selected": false,
+      "source": "https://the-edit.co.kr/41106"
+    },
+    {
+      "name": "커피파인더",
+      "category": "카페",
+      "description": "제주시. 더에디트 기사에서 제주시 추천 카페로 함께 언급된 곳(세부 설명 없음)",
+      "score": 55,
+      "selected": false,
+      "source": "https://the-edit.co.kr/41106"
+    },
+    {
+      "name": "와토커피",
+      "category": "카페",
+      "description": "금능. 더에디트 기사에서 금능 일대 추천 카페로 언급된 곳(세부 설명 없음)",
+      "score": 95,
+      "selected": false,
+      "source": "https://the-edit.co.kr/41106"
+    },
+    {
+      "name": "베케",
+      "category": "카페",
+      "description": "플로리스트 주인이 운영하는 카페로, 이끼 낀 돌담과 억새·핑크뮬리 정원이 있어 사진 찍기 좋음",
+      "score": 40,
+      "selected": false,
+      "source": "https://www.elle.co.kr/article/49162"
+    },
+    {
+      "name": "제주에인감귤밭",
+      "category": "카페",
+      "description": "약 2,000평 감귤밭 안에 있는 카페로, 철에 따라 귤 따기 체험이 가능하고 직접 만든 한라봉·청귤청 음료를 팖",
+      "score": 40,
+      "selected": true,
+      "source": "https://www.elle.co.kr/article/49162"
+    },
+    {
+      "name": "서귀다원",
+      "category": "카페",
+      "description": "서귀포시 516로 717. 56년째 할머니가 운영하는 차 카페로, 유기농 녹차와 황차가 유명하고 근처 숲길을 걸을 수 있음",
+      "score": 70,
+      "selected": false,
+      "source": "https://www.elle.co.kr/article/49162"
+    },
+    {
+      "name": "미남미녀",
+      "category": "카페",
+      "description": "오래된 제주 집을 개조한 카페로, 사진 찍기 좋은 소품과 디저트가 있으며 보통 만석이라 인스타 DM으로 예약",
+      "score": 90,
+      "selected": true,
+      "source": "https://www.elle.co.kr/article/49162"
+    },
+    {
+      "name": "카페올름JEJU",
+      "category": "카페",
+      "description": "문어·새우 파스타와 자연이 보이는 넓은 테라스가 있는 레스토랑형 카페",
+      "score": 75,
+      "selected": true,
+      "source": "https://blog.namanecard.com/jeju-restaurants/"
+    },
+    {
+      "name": "달책빵",
+      "category": "카페",
+      "description": "분위기 있는 카페로, 제주 당근으로 만든 당근 주스와 케이크가 알려져 있음",
+      "score": 55,
+      "selected": false,
+      "source": "https://blog.namanecard.com/jeju-restaurants/"
+    },
+    {
+      "name": "카페 아오오",
+      "category": "카페",
+      "description": "바다가 보이는 카페로, 한라봉 라떼가 유명함",
+      "score": 90,
+      "selected": true,
+      "source": "https://blog.namanecard.com/jeju-restaurants/"
+    },
+    {
+      "name": "스타벅스 더제주송당파크R점",
+      "category": "카페",
+      "description": "구좌읍. 독특한 인테리어와 자연 전망을 갖춘 대형 매장으로, 제주 한정 메뉴와 굿즈가 있음",
+      "score": 75,
+      "selected": true,
+      "source": "https://hotplacehunter.co.kr/sns/article/88430/"
+    },
+    {
+      "name": "런던 베이글 뮤지엄 제주점",
+      "category": "카페",
+      "description": "서울 인기 베이글 가게의 제주 지점으로, 베이글 샌드위치와 독특한 인테리어로 알려짐",
+      "score": 80,
+      "selected": false,
+      "source": "https://blog.namanecard.com/jeju-restaurants/"
+    },
+    {
+      "name": "프릳츠 제주 성산점",
+      "category": "카페",
+      "description": "성산. 스페셜티 커피를 파는 카페",
+      "score": 50,
+      "selected": false,
+      "source": "https://blog.namanecard.com/jeju-restaurants/"
+    },
+    {
+      "name": "보룡제과",
+      "category": "카페",
+      "description": "한라봉 빵 등 감귤을 쓴 빵으로 알려진 지역 빵집",
+      "score": 95,
+      "selected": false,
+      "source": "https://blog.namanecard.com/jeju-restaurants/"
+    },
+    {
+      "name": "모알보알",
+      "category": "카페",
+      "description": "구좌읍 김녕. 빈백과 식물이 있는 동남아풍 카페로, 바다 전망의 야외 조형물이 있고 어린이는 입장할 수 없음",
+      "score": 50,
+      "selected": false,
+      "source": "https://hotplacehunter.co.kr/sns/article/88430/"
+    },
+    {
+      "name": "비케이브",
+      "category": "카페",
+      "description": "조천읍. 계절 꽃밭과 동굴, 포토 스폿이 있고 직접 양봉한 꿀로 만든 음료를 파는 카페",
+      "score": 75,
+      "selected": true,
+      "source": "https://hotplacehunter.co.kr/sns/article/88430/"
+    },
+    {
+      "name": "레이지펌프",
+      "category": "카페",
+      "description": "애월읍. 회색 빈티지 인테리어와 붉은 자동차 전시가 있는 바다 전망 카페로, 말차 크리미가 유명함",
+      "score": 60,
+      "selected": false,
+      "source": "https://hotplacehunter.co.kr/sns/article/88430/"
+    },
+    {
+      "name": "빠빠라기",
+      "category": "카페",
+      "description": "제주시 중앙로. 1990년부터 도민에게 사랑받아 온 빙수집으로, 양이 많아 섞어 먹는 것이 좋다고 소개됨",
+      "score": 70,
+      "selected": false,
+      "source": "https://hotplacehunter.co.kr/sns/article/88430/"
+    },
+    {
+      "name": "자매국수",
+      "category": "음식점",
+      "description": "제주시 삼도이동. 네이버 마이플레이스 리뷰 수 기준 제주 국수집 1위로 소개됨(하퍼스바자 기사)",
+      "score": 65,
+      "selected": false,
+      "source": "https://www.harpersbazaar.co.kr/article/68820"
+    },
+    {
+      "name": "가시아방국수",
+      "category": "음식점",
+      "description": "서귀포시 성산읍 고성리. 네이버 마이플레이스 리뷰 수 기준 제주 국수집 2위로 소개됨(하퍼스바자 기사)",
+      "score": 55,
+      "selected": false,
+      "source": "https://www.harpersbazaar.co.kr/article/68820"
+    },
+    {
+      "name": "올래국수",
+      "category": "음식점",
+      "description": "제주시 연동. 1998년 개업 이후 돼지 사골 국수 한 가지만 파는 집",
+      "score": 65,
+      "selected": false,
+      "source": "https://hotplacehunter.co.kr/sns/article/87816/"
+    },
+    {
+      "name": "중문두수리보말칼국수",
+      "category": "음식점",
+      "description": "서귀포시 중문동. 네이버 마이플레이스 리뷰 수 기준 제주 국수집 4위로 소개됨(하퍼스바자 기사)",
+      "score": 70,
+      "selected": false,
+      "source": "https://www.harpersbazaar.co.kr/article/68820"
+    },
+    {
+      "name": "한림칼국수 제주본점",
+      "category": "음식점",
+      "description": "제주시 한림읍 한림리. 네이버 마이플레이스 리뷰 수 기준 제주 국수집 5위로 소개됨(하퍼스바자 기사)",
+      "score": 45,
+      "selected": false,
+      "source": "https://www.harpersbazaar.co.kr/article/68820"
+    },
+    {
+      "name": "고씨네천지국수",
+      "category": "음식점",
+      "description": "서귀포시 서귀동. 네이버 마이플레이스 리뷰 수 기준 제주 국수집 6위로 소개됨(하퍼스바자 기사)",
+      "score": 80,
+      "selected": false,
+      "source": "https://www.harpersbazaar.co.kr/article/68820"
+    },
+    {
+      "name": "제주순메밀막국수",
+      "category": "음식점",
+      "description": "서귀포시 안덕면 서광리. 네이버 마이플레이스 리뷰 수 기준 제주 국수집 7위로 소개됨(하퍼스바자 기사)",
+      "score": 60,
+      "selected": false,
+      "source": "https://www.harpersbazaar.co.kr/article/68820"
+    },
+    {
+      "name": "도토리키친 본점",
+      "category": "음식점",
+      "description": "제주시 삼도이동. 네이버 마이플레이스 리뷰 수 기준 제주 국수집 8위로 소개됨(하퍼스바자 기사)",
+      "score": 40,
+      "selected": false,
+      "source": "https://www.harpersbazaar.co.kr/article/68820"
+    },
+    {
+      "name": "산도롱맨도롱 구좌읍종달리점",
+      "category": "음식점",
+      "description": "제주시 구좌읍 종달리. 네이버 마이플레이스 리뷰 수 기준 제주 국수집 9위로 소개됨(하퍼스바자 기사)",
+      "score": 40,
+      "selected": false,
+      "source": "https://www.harpersbazaar.co.kr/article/68820"
+    },
+    {
+      "name": "중문보말칼국수",
+      "category": "음식점",
+      "description": "서귀포시 중문동. 네이버 마이플레이스 리뷰 수 기준 제주 국수집 10위로 소개됨(하퍼스바자 기사)",
+      "score": 50,
+      "selected": false,
+      "source": "https://www.harpersbazaar.co.kr/article/68820"
+    },
+    {
+      "name": "오는정김밥",
+      "category": "음식점",
+      "description": "예약 없이는 가기 어렵다고 소개된 곳(하퍼스바자 기사, 위치 미기재)",
+      "score": 50,
+      "selected": false,
+      "source": "https://www.harpersbazaar.co.kr/article/68820"
+    },
+    {
+      "name": "연돈",
+      "category": "음식점",
+      "description": "예약 없이는 가기 어렵다고 소개된 곳(하퍼스바자 기사, 위치 미기재)",
+      "score": 40,
+      "selected": false,
+      "source": "https://www.harpersbazaar.co.kr/article/68820"
+    },
+    {
+      "name": "난드르바당",
+      "category": "음식점",
+      "description": "서귀포. 돌담과 탁 트인 자연 옆에서 흑돼지를 구워 먹는 곳으로, 고기와 경치가 모두 좋다고 소개됨",
+      "score": 60,
+      "selected": false,
+      "source": "https://www.esquirekorea.co.kr/article/56951"
+    },
+    {
+      "name": "맛존디국수",
+      "category": "음식점",
+      "description": "서귀포 중문 일대. 오래 끓인 육수에 고기가 푸짐한 국수집으로 현지인에게 인기이며, 영업시간이 짧아 전화 확인을 권함",
+      "score": 70,
+      "selected": false,
+      "source": "https://www.esquirekorea.co.kr/article/56951"
+    },
+    {
+      "name": "검은여닭도가니",
+      "category": "음식점",
+      "description": "문섬이 보이는 바닷가 식당. 해산물을 더한 통닭 도가니탕으로 알려져 있고 파도 소리를 들으며 먹을 수 있어 비 오는 날 추천",
+      "score": 95,
+      "selected": false,
+      "source": "https://www.esquirekorea.co.kr/article/56951"
+    },
+    {
+      "name": "천짓골식당",
+      "category": "음식점",
+      "description": "서귀포. 30년 된 돼지고기 식당으로, 부드러운 돔베고기를 테이블에서 썰어 주고 몸국을 무료로 리필해 줌",
+      "score": 95,
+      "selected": false,
+      "source": "https://www.esquirekorea.co.kr/article/56951"
+    },
+    {
+      "name": "삼무뚝배기",
+      "category": "음식점",
+      "description": "서귀포. 신선한 갈치만 쓰는 갈치국 전문점으로, 맑고 얼큰한 국물이 특징",
+      "score": 70,
+      "selected": false,
+      "source": "https://www.esquirekorea.co.kr/article/56951"
+    },
+    {
+      "name": "숙성도 함덕점",
+      "category": "음식점",
+      "description": "함덕. 숙성 제주 흑돼지 전문점으로, 하루에 한정 수량의 특수 부위를 냄",
+      "score": 85,
+      "selected": false,
+      "source": "https://blog.namanecard.com/jeju-restaurants/"
+    },
+    {
+      "name": "3대국수 본점",
+      "category": "음식점",
+      "description": "전통 제주 흑돼지 국수집으로, 돔베(수육) 국수와 멸치 육수 국수가 알려져 있음",
+      "score": 55,
+      "selected": false,
+      "source": "https://blog.namanecard.com/jeju-restaurants/"
+    },
+    {
+      "name": "톰톰카레",
+      "category": "음식점",
+      "description": "제주산 재료를 쓰는 카레집으로, 버섯 카레와 시금치 카레가 알려져 있음",
+      "score": 50,
+      "selected": true,
+      "source": "https://blog.namanecard.com/jeju-restaurants/"
+    },
+    {
+      "name": "창승포식당",
+      "category": "음식점",
+      "description": "바닷가 가까이에 있는 해물전골 전문점으로, 기본 반찬이 무료로 제공됨",
+      "score": 50,
+      "selected": false,
+      "source": "https://blog.namanecard.com/jeju-restaurants/"
+    },
+    {
+      "name": "성산 어멍횟집",
+      "category": "음식점",
+      "description": "성산일출봉 근처 횟집으로, 고등어회와 자리돔(작은 새우) 회가 추천 메뉴로 소개됨",
+      "score": 95,
+      "selected": false,
+      "source": "https://blog.namanecard.com/jeju-restaurants/"
+    },
+    {
+      "name": "도갈비",
+      "category": "음식점",
+      "description": "제주시. 촘촘히 칼집을 낸 흑돼지 요리로 알려져 있고 최근 공항점을 열었음",
+      "score": 45,
+      "selected": false,
+      "source": "https://hotplacehunter.co.kr/sns/article/87816/"
+    },
+    {
+      "name": "산지해장국",
+      "category": "음식점",
+      "description": "제주시. 진한 육수의 해장국집으로, 소고기 해장국과 내장탕 중심의 짧은 메뉴",
+      "score": 40,
+      "selected": false,
+      "source": "https://hotplacehunter.co.kr/sns/article/87816/"
+    },
+    {
+      "name": "맛나식당",
+      "category": "음식점",
+      "description": "서귀포시 성산. 매콤달콤한 갈치조림으로 인기 있고 점심에 대기가 자주 있음",
+      "score": 90,
+      "selected": true,
+      "source": "https://hotplacehunter.co.kr/sns/article/87816/"
+    },
+    {
+      "name": "2010제주상춘재",
+      "category": "음식점",
+      "description": "제주시. 전 청와대 셰프가 운영하며 계절 비빔밥과 돌솥밥을 냄",
+      "score": 45,
+      "selected": true,
+      "source": "https://hotplacehunter.co.kr/sns/article/87816/"
+    },
+    {
+      "name": "이춘옥원조고등어쌈밥",
+      "category": "음식점",
+      "description": "제주시 애월. 김치를 넣은 고등어조림 쌈밥으로 유명하고 바다가 보이는 좌석이 있음",
+      "score": 90,
+      "selected": false,
+      "source": "https://hotplacehunter.co.kr/sns/article/87816/"
+    }
+  ]
+}
